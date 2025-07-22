@@ -4,13 +4,20 @@ export default function BookCard({ book }) {
   const availabilityStatus = book.availableCopies > 0 ? 'available' : 'unavailable'
   
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden">
-      {/* Book Cover Placeholder */}
+    <div data-testid="book-card" className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden">
       <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-        <div className="text-white text-center p-4">
-          <h3 className="font-bold text-lg mb-2">{book.title}</h3>
-          <p className="text-sm opacity-90">by {book.author}</p>
-        </div>
+        {book.coverImage ? (
+          <img 
+            src={book.coverImage} 
+            alt={book.title}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="text-white text-center p-4">
+            <h3 className="font-bold text-lg mb-2">{book.title}</h3>
+            <p className="text-sm opacity-90">by {book.author}</p>
+          </div>
+        )}
       </div>
 
       {/* Book Information */}

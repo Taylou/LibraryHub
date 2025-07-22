@@ -1,4 +1,4 @@
-// 'use-client';
+'use-client';
 // import { useState } from 'react';
 import { Search, BookOpen, User, Bell } from 'lucide-react'
 import Link from 'next/link'

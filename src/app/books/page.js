@@ -1,18 +1,54 @@
 'use client';
-import { books } from '@/data/sampleData';
+import { useState, useEffect } from 'react';
 import BookCard from '@/components/bookCard';
 import SearchBar from '@/components/SearchBar';
-import { useBookSearch } from '@/hooks/useBookSearch';
 import Link from 'next/link';
 
 export default function BooksPage() {
-    const {
-        searchedBooks,
-        searchTerm,
-        handleSearch,
-        totalBooks,
-        filteredCount
-    } = useBookSearch(books);
+  const [books, setBooks] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchBooks() {
+      try {
+        const response = await fetch('/api/books');
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        setBooks(data);
+      } catch (error) {
+        console.error('Failed to fetch books:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    fetchBooks();
+  }, []);
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+  };
+
+  const searchedBooks = books.filter(book => {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      book.title.toLowerCase().includes(term) ||
+      book.author.toLowerCase().includes(term) ||
+      book.genre.toLowerCase().includes(term) ||
+      book.description.toLowerCase().includes(term)
+    );
+  });
+
+  const totalBooks = books.length;
+  const filteredCount = searchedBooks.length;
+
+  if (isLoading) {
+    return <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <p>Loading books...</p>
+    </div>;
+  }
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -67,14 +103,14 @@ export default function BooksPage() {
 // import { books } from '@/data/sampleData';
 // import BookCard from '@/components/bookCard';
 // import SearchBar from '@/components/SearchBar';
-// import { useBookFilters } from '@/hooks/useBookSearch';
+// // import { useBookSearch } from '@/hooks/useBookSearch';
 // import Link from 'next/link';
 
 // export default function BooksPage() {
 //   const {
-//     searchTerm,
+    // searchTerm,
 //     filters,
-//     handleSearch,
+    // handleSearch,
 //     resetAllFilters,
 //     totalBooks,
 //     filteredCount
@@ -117,7 +153,7 @@ export default function BooksPage() {
 //         </div>
 //         </div>
 //         </div> );
-//   {/* return (
+//   return (
 //     <div className="min-h-screen bg-gray-50">
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 //         <div className="mb-8">
@@ -134,5 +170,5 @@ export default function BooksPage() {
 //         </div>
 //       </div>
 //     </div>
-//   ); */}
-// }
+//   ); }
+
